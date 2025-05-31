@@ -18,11 +18,12 @@ class AWaves extends HTMLElement {
   isPaused;
   isDragging;
 
+
+
   bindEvents() {
     Emitter.on('mousemove', this.onMouseMove, this);
     Emitter.on('resize', this.onResize, this);
     Emitter.on('audioData', this.onAudioData, this);
-    Emitter.on('animationState', this.onAnimationState, this);
 
     this.addEventListener('touchmove', this.onTouchMove.bind(this));
     this.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -33,29 +34,10 @@ class AWaves extends HTMLElement {
   }
 
   onAudioData(data) {
-    // Track previous energy for peak detection
-    this.prevEnergy = this.audioData.energy || 0;
     this.audioData.energy = data.energy || 0;
     this.audioData.bass = data.bass || 0;
     this.audioData.mid = data.mid || 0;
     this.audioData.high = data.high || 0;
-    
-    // Detect peak for sunspot effect (significant sudden increase in energy)
-    const energyDiff = this.audioData.energy - this.prevEnergy;
-    if (energyDiff > 0.2 && this.audioData.energy > 0.3) {
-      this.sunspotTrigger = true;
-      this.sunspotIntensity = this.audioData.energy;
-      this.sunspotTime = Date.now();
-    } else if (this.sunspotTrigger && Date.now() - this.sunspotTime > 200) {
-      // Fade out after 200ms
-      this.sunspotTrigger = false;
-      this.sunspotIntensity = 0;
-    }
-  }
-
-  onAnimationState(state) {
-    this.animationState = state || 1;
-    console.log('Animation state changed to:', this.animationState);
   }
 
   onMouseDown(e) {
@@ -137,13 +119,6 @@ class AWaves extends HTMLElement {
       mid: 0,
       high: 0
     };
-    this.animationState = 1; // Default animation state (1 to 4)
-    this.prevEnergy = 0;
-    this.sunspotTrigger = false;
-    this.sunspotIntensity = 0;
-    this.sunspotTime = 0;
-    this.colorSyncActive = false; // Track if color sync is active
-    this.colorSyncStartTime = 0; // Time when color sync started
 
     this.isInteractive = false;
     this.isPaused = false; // Start with animation running
@@ -231,113 +206,22 @@ class AWaves extends HTMLElement {
   }
 
   movePoints(time) {
-    const { lines, mouse, noise, audioData, animationState, sunspotTrigger, sunspotIntensity } = this;
+    const { lines, mouse, noise, audioData } = this;
     lines.forEach((points) => {
       points.forEach((p) => {
         const move = noise.perlin2(
           (p.x + time * 0.0125) * 0.002,
           (p.y + time * 0.005) * 0.0015
         ) * 12;
-        // Base wave movement influenced by noise, with subtle baseline and audio enhancement (MilkDrop-inspired)
-        // Subtle movement always present; enhanced dynamic movement with audio energy
-        let waveX = Math.cos(move + Math.sin(time * 0.01)) * (audioData.energy > 0.05 ? 32 : 10);
-        let waveY = Math.sin(move + Math.cos(time * 0.015)) * (audioData.energy > 0.05 ? 16 : 5);
+        // Base wave movement influenced by noise
+        let waveX = Math.cos(move) * 32;
+        let waveY = Math.sin(move) * 16;
         
-        // Modify wave movement based on audio data with different animation states
+        // Modify wave movement based on audio data
         if (audioData.energy > 0) {
           const audioInfluence = audioData.energy * 50; // Scale energy for noticeable effect
-          if (animationState === 1) {
-            // State 1: Radial pulsing from center synchronized with bass, constrained to edges
-            const centerX = this.bounding.width / 2;
-            const centerY = this.bounding.height / 2;
-            const distFromCenter = Math.hypot(p.x - centerX, p.y - centerY);
-            const maxDist = Math.hypot(centerX, centerY);
-            const radialFactor = distFromCenter / maxDist; // More effect further from center
-            // Emphasize bass synchronization with controlled influence to prevent edge separation
-            let waveXAdj = Math.cos((p.x - centerX) * 0.005 + audioData.bass * 5) * audioInfluence * radialFactor * 1.5;
-            let waveYAdj = Math.sin((p.y - centerY) * 0.005 + audioData.bass * 5) * audioInfluence * radialFactor * 1.5;
-            // Constrain movement to stay within screen boundaries
-            const maxDisplacementX = this.bounding.width * 0.1; // Limit displacement to 10% of width
-            const maxDisplacementY = this.bounding.height * 0.1; // Limit displacement to 10% of height
-            waveXAdj = Math.max(-maxDisplacementX, Math.min(maxDisplacementX, waveXAdj));
-            waveYAdj = Math.max(-maxDisplacementY, Math.min(maxDisplacementY, waveYAdj));
-            waveX += waveXAdj;
-            waveY += waveYAdj;
-          } else if (animationState === 2) {
-            // State 2: Horizontal waves driven by bass - wide sweeping motion
-            // Increase bass response for more pronounced effect
-            waveX += Math.cos(move + audioData.bass * 5 + p.y * 0.002) * audioInfluence * 2.0;
-            waveY += Math.sin(move + audioData.mid * 0.5 + audioData.bass * 2) * audioInfluence * 0.5;
-          } else if (animationState === 3) {
-            // State 3: Vertical waves synchronized with bass and mid frequencies
-            // Significantly increase bass response for stronger vertical motion
-            waveX += Math.cos(audioData.mid * 2.0) * audioInfluence * 0.5;
-            waveY += Math.sin(audioData.bass * 4.0) * audioInfluence * 2.5;
-          } else if (animationState === 4) {
-            // State 4: Wave front effect synchronized with music for a thoughtful, appealing look
-            // Simulate a traveling wave front across the grid, driven by bass
-            const waveFrontPosition = (time * 0.02 + audioData.bass * 3.0) % (this.bounding.width * 2);
-            const waveDirection = waveFrontPosition < this.bounding.width ? 1 : -1; // Alternate direction
-            const waveCenterX = waveDirection === 1 ? waveFrontPosition : (this.bounding.width * 2 - waveFrontPosition);
-            const waveCenterY = this.bounding.height / 2 + Math.sin(time * 0.01 + audioData.mid * 2) * (this.bounding.height / 4);
-            const dxWave = p.x - waveCenterX;
-            const dyWave = p.y - waveCenterY;
-            const distWave = Math.abs(dxWave); // Focus on horizontal distance for wave front
-            const waveWidth = 150 + audioData.energy * 80; // Width of wave front influenced by energy
-            if (distWave < waveWidth) {
-              const intensity = (1 - distWave / waveWidth) * (audioData.energy + 0.7);
-              // Create a smooth wave front effect with bass-driven height
-              waveX += Math.cos(dxWave * 0.02 + audioData.bass * 2) * intensity * audioInfluence * 1.2 * waveDirection;
-              waveY += Math.sin(dyWave * 0.01 + audioData.bass * 3) * intensity * audioInfluence * 1.8;
-            } else {
-              // Subtle background motion outside the wave front
-              waveX += Math.cos(move + audioData.high * 0.5) * audioInfluence * 0.3;
-              waveY += Math.sin(move + audioData.mid * 0.5) * audioInfluence * 0.3;
-            }
-          }
-        }
-        
-        // Add sunspot-like variations triggered by frequency peaks with enhanced burst effect (MilkDrop-inspired custom shape)
-        if (sunspotTrigger) {
-          const centerX = this.bounding.width / 2;
-          const centerY = this.bounding.height / 2;
-          const distFromCenter = Math.hypot(p.x - centerX, p.y - centerY);
-          const maxDist = Math.hypot(centerX, centerY);
-          if (distFromCenter < maxDist * 0.3) { // Small burst near center
-            const burstFactor = (1 - distFromCenter / (maxDist * 0.3)) * sunspotIntensity * 30; // Increased intensity
-            waveX += Math.cos(time * 0.15 + p.x * 0.02) * burstFactor; // Faster oscillation for burst
-            waveY += Math.sin(time * 0.15 + p.y * 0.02) * burstFactor; // Faster oscillation for burst
-          }
-        }
-        
-        // Enhanced ColorMorph synchronization with varied frequency detection
-        // Detect audio peaks across different frequency bands with varied thresholds
-        const bassPeak = audioData.bass > 0.5; // Lower threshold for bass
-        const midPeak = audioData.mid > 0.4; // Mid-range threshold
-        const highPeak = audioData.high > 0.3; // Higher sensitivity for high frequencies
-        if ((bassPeak || midPeak || highPeak) && !this.colorSyncActive) {
-          this.colorSyncActive = true;
-          this.colorSyncStartTime = Date.now();
-          // Dynamic color shift based on frequency dominance
-          let dominantHueShift = 0;
-          let saturationBoost = audioData.energy * 15; // More dynamic saturation
-          if (bassPeak) {
-            dominantHueShift = audioData.bass * 40; // Strong bass shifts hue more
-          } else if (midPeak) {
-            dominantHueShift = audioData.mid * 20 + 30; // Mid shifts to a different spectrum
-          } else if (highPeak) {
-            dominantHueShift = audioData.high * 10 + 60; // High frequencies shift further
-          }
-          const newPrimaryHue = (345 + dominantHueShift) % 360; // Varied hue based on frequency
-          const newSaturation = Math.min(98, 70 + saturationBoost); // Higher saturation range
-          const lightnessAdjust = bassPeak ? 45 : (midPeak ? 50 : 55); // Adjust lightness based on frequency
-          // Fluid, expressive color update
-          document.documentElement.style.setProperty('--color-primary', this.hslToHex(newPrimaryHue, newSaturation, lightnessAdjust));
-          document.documentElement.style.setProperty('--color-secondary', this.hslToHex((newPrimaryHue + 180) % 360, newSaturation - 15, bassPeak ? 10 : 15));
-        } else if (this.colorSyncActive && Date.now() - this.colorSyncStartTime > (bassPeak ? 1500 : 800)) {
-          // Duration varies based on bass presence for more realistic reaction
-          this.colorSyncActive = false;
-          // No action needed as ColorMorph will resume its default behavior
+          waveX += Math.cos(move + audioData.bass * 2) * audioInfluence;
+          waveY += Math.sin(move + audioData.mid * 2) * audioInfluence;
         }
         
         p.wave.x = waveX;
@@ -347,21 +231,21 @@ class AWaves extends HTMLElement {
           const dx = p.x - mouse.sx;
           const dy = p.y - mouse.sy;
           const d = Math.hypot(dx, dy);
-          const l = Math.max(250, mouse.vs * 1.5); // Increased influence radius and velocity impact
+          const l = Math.max(175, mouse.vs);
           if (d < l) {
             const s = 1 - d / l;
-            const f = Math.cos(d * 0.002) * s; // Increased force factor
-            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.0015; // Stronger force
-            p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.0015; // Stronger force
+            const f = Math.cos(d * 0.001) * s;
+            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065;
+            p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
           }
-          p.cursor.vx += (0 - p.cursor.x) * 0.01; // Faster return to origin
-          p.cursor.vy += (0 - p.cursor.y) * 0.01; // Faster return to origin
-          p.cursor.vx *= 0.9; // Slightly less damping for more fluid motion
-          p.cursor.vy *= 0.9; // Slightly less damping for more fluid motion
-          p.cursor.x += p.cursor.vx * 3; // Increased movement impact
-          p.cursor.y += p.cursor.vy * 3; // Increased movement impact
-          p.cursor.x = Math.min(150, Math.max(-150, p.cursor.x)); // Wider range of movement
-          p.cursor.y = Math.min(150, Math.max(-150, p.cursor.y)); // Wider range of movement
+          p.cursor.vx += (0 - p.cursor.x) * 0.005;
+          p.cursor.vy += (0 - p.cursor.y) * 0.005;
+          p.cursor.vx *= 0.925;
+          p.cursor.vy *= 0.925;
+          p.cursor.x += p.cursor.vx * 2;
+          p.cursor.y += p.cursor.vy * 2;
+          p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x));
+          p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
         }
       });
     });
@@ -378,7 +262,7 @@ class AWaves extends HTMLElement {
   }
 
   drawLines() {
-    const { lines, moved, paths, audioData } = this;
+    const { lines, moved, paths } = this;
     lines.forEach((points, lIndex) => {
       let p1 = moved(points[0], false);
       let d = `M ${p1.x} ${p1.y}`;
@@ -389,11 +273,6 @@ class AWaves extends HTMLElement {
         d += `L ${p1.x} ${p1.y}`;
       });
       paths[lIndex].setAttribute('d', d);
-      // MilkDrop-inspired audio-reactive line styling based on frequency bands
-      const opacity = 0.5 + audioData.bass * 0.3; // Bass increases opacity
-      const strokeWidth = 1 + audioData.high * 0.5; // High frequencies increase thickness
-      paths[lIndex].style.opacity = opacity.toFixed(2);
-      paths[lIndex].style.strokeWidth = `${strokeWidth.toFixed(2)}px`;
     });
   }
 
@@ -415,21 +294,6 @@ class AWaves extends HTMLElement {
     this.style.setProperty('--y', `${mouse.sy}px`);
     this.movePoints(time);
     this.drawLines();
-  }
-  /**
-   * Convert HSL values to hex color string (borrowed from ColorMorph.js for color sync)
-   */
-  hslToHex(h, s, l) {
-    l /= 100;
-    const a = (s * Math.min(l, 1 - l)) / 100;
-    const f = (n) => {
-      const k = (n + h / 30) % 12;
-      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-      return Math.round(255 * color)
-        .toString(16)
-        .padStart(2, '0');
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
   }
 }
 
