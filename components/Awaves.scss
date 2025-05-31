@@ -1,0 +1,47 @@
+// AWaves.scss is in src/components/
+@use '../styles/helpers/colors' as *;
+@use '../styles/variables-scss/colors' as *;
+@use '../styles/site/base' as *;
+
+  a-waves {
+    --x: -0.5rem;
+    --y: 50%;
+
+    position: relative;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    &:before {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 0.5rem;
+      height: 0.5rem;
+
+      background: color(secondary);
+      border-radius: 50%;
+
+      transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0);
+
+      will-change: transform;
+
+      content: '';
+    }
+
+    svg {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      :global(.a__line) {
+        fill: none;
+        stroke: color(secondary);
+        stroke-width: 1px;
+      }
+    }
+  }
