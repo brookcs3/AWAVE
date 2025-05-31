@@ -74,6 +74,9 @@
   <a-waves data-intersect>
     <svg class="js-svg"></svg>
   </a-waves>
+  <!-- Audio elements for playback -->
+  <audio id="track1" src="ui.m4a" preload="auto"></audio>
+  <audio id="track2" src="RadioBabylon.m4a" preload="auto"></audio>
   <!-- Add these script tags for JS functionality -->
   <!-- GSAP for animations -->
   <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
@@ -82,6 +85,7 @@
   <script type="module" src="Noise.js"></script>
   <script type="module" src="ColorMorph.js"></script>
   <script type="module" src="AWaves.js"></script>
+  <script type="module" src="WaveformGrid.js"></script>
   
   <!-- Add mouse tracking script -->
   <script type="module">
@@ -128,6 +132,87 @@
       
       // Set loaded class
       document.documentElement.classList.add('is-loaded');
+      
+      // Audio playback and visualizer integration
+      const track1 = document.getElementById('track1');
+      const track2 = document.getElementById('track2');
+      const wavesElement = document.querySelector('a-waves');
+      let currentTrack = track1;
+      let waveformGrid = null;
+      let isPlaying = false;
+      let longPressTimer = null;
+      let mobileControlState = 0; // 0: play track1, 1: stop, 2: play track2, 3: stop, repeat
+      
+      // Instantiate WaveformGrid for audio visualization
+      import('./WaveformGrid.js').then(({ WaveformGrid }) => {
+        waveformGrid = new WaveformGrid(wavesElement, currentTrack);
+      }).catch(err => {
+        console.error('Failed to load WaveformGrid:', err);
+      });
+      
+      // Function to toggle playback and cycle tracks
+      function togglePlayback() {
+        if (isPlaying) {
+          currentTrack.pause();
+          isPlaying = false;
+        } else {
+          if (currentTrack === track1) {
+            currentTrack = track2;
+          } else {
+            currentTrack = track1;
+          }
+          currentTrack.play().catch(err => {
+            console.error('Playback failed:', err);
+          });
+          isPlaying = true;
+          if (waveformGrid) {
+            waveformGrid.connectAudio(currentTrack);
+          }
+        }
+      }
+      
+      // Desktop keyboard controls (p or l to toggle play/pause and cycle tracks)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'p' || e.key === 'l') {
+          e.preventDefault();
+          togglePlayback();
+        }
+      });
+      
+      // Mobile long press controls (3-second press to toggle play/stop and cycle tracks)
+      function handleLongPressStart() {
+        longPressTimer = setTimeout(() => {
+          if (mobileControlState === 0) {
+            currentTrack = track1;
+            currentTrack.play().catch(err => console.error('Playback failed:', err));
+            isPlaying = true;
+            if (waveformGrid) waveformGrid.connectAudio(currentTrack);
+          } else if (mobileControlState === 1) {
+            currentTrack.pause();
+            isPlaying = false;
+          } else if (mobileControlState === 2) {
+            currentTrack = track2;
+            currentTrack.play().catch(err => console.error('Playback failed:', err));
+            isPlaying = true;
+            if (waveformGrid) waveformGrid.connectAudio(currentTrack);
+          } else if (mobileControlState === 3) {
+            currentTrack.pause();
+            isPlaying = false;
+          }
+          mobileControlState = (mobileControlState + 1) % 4;
+        }, 3000);
+      }
+      
+      function handleLongPressEnd() {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      }
+      
+      document.addEventListener('touchstart', handleLongPressStart, false);
+      document.addEventListener('touchend', handleLongPressEnd, false);
+      document.addEventListener('touchcancel', handleLongPressEnd, false);
     });
   </script>
 </body>
