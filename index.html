@@ -183,12 +183,13 @@
           currentSource = null;
         }
         isPlaying = false;
-        if (wavesElement) {
-          wavesElement.style.removeProperty('--wave-amplitude');
-          wavesElement.style.removeProperty('--bass-level');
-          wavesElement.style.removeProperty('--mid-level');
-          wavesElement.style.removeProperty('--high-level');
-        }
+        // Reset audio data when playback stops
+        Emitter.emit('audioData', {
+          energy: 0,
+          bass: 0,
+          mid: 0,
+          high: 0
+        });
       }
       
       // Function to update visualization based on audio frequency data
@@ -207,11 +208,13 @@
         high /= (64 * 255);
         const energy = (bass + mid + high) / 3;
         
-        // Increase the scaling factor for more pronounced visual effects
-        wavesElement.style.setProperty('--wave-amplitude', (energy * 5.0).toFixed(2));
-        wavesElement.style.setProperty('--bass-level', (bass * 3.0).toFixed(2));
-        wavesElement.style.setProperty('--mid-level', (mid * 3.0).toFixed(2));
-        wavesElement.style.setProperty('--high-level', (high * 3.0).toFixed(2));
+        // Emit audio data to AWaves component for visualization
+        Emitter.emit('audioData', {
+          energy: energy,
+          bass: bass,
+          mid: mid,
+          high: high
+        });
         
         // Add debug logging to verify frequency data updates
         console.log('Frequency Data - Energy:', energy.toFixed(2), 'Bass:', bass.toFixed(2), 'Mid:', mid.toFixed(2), 'High:', high.toFixed(2));
