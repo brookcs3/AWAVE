@@ -88,43 +88,44 @@
     import Emitter from './Emitter.js';
     import ColorMorph from './ColorMorph.js';
     
-    // Initialize animation
-    
-    // Initialize color morphing (removing contrasted theme)
-    document.documentElement.classList.remove('theme-contrasted');
-    
-    // Create color morph instance
-    const colorMorph = new ColorMorph({
-      updateInterval: 8000, // Change colors every 8 seconds
-      transitionDuration: 3,
-      hueRange: [345, 15], // Red spectrum
-      saturationRange: [75, 95],
-      lightnessRange: [45, 60]
-    });
-    
-    // Track mouse movement and emit events
-    document.addEventListener('mousemove', (e) => {
-      Emitter.emit('mousemove', e.clientX, e.clientY);
-    });
-    
-    // Track window resize
-    window.addEventListener('resize', () => {
-      Emitter.emit('resize');
-    });
-    
-    // Make waves interactive
-    const waves = document.querySelector('a-waves');
-    if (waves) {
-      // Trigger intersection
-      waves.dispatchEvent(new CustomEvent('intersect', { 
-        detail: { isIntersecting: true } 
-      }));
+    // Wait for all resources to load before initializing
+    window.addEventListener('load', () => {
+      // Initialize color morphing (removing contrasted theme)
+      document.documentElement.classList.remove('theme-contrasted');
       
-      // Make it interactive (respond to mouse)
-      setTimeout(() => {
-        waves.dispatchEvent(new CustomEvent('introend'));
-      }, 1000);
-    }
+      // Create color morph instance
+      const colorMorph = new ColorMorph({
+        updateInterval: 8000, // Change colors every 8 seconds
+        transitionDuration: 3,
+        hueRange: [345, 15], // Red spectrum
+        saturationRange: [75, 95],
+        lightnessRange: [45, 60]
+      });
+      
+      // Track mouse movement and emit events
+      document.addEventListener('mousemove', (e) => {
+        Emitter.emit('mousemove', e.clientX, e.clientY);
+      });
+      
+      // Track window resize
+      window.addEventListener('resize', () => {
+        Emitter.emit('resize');
+      });
+      
+      // Make waves interactive
+      const waves = document.querySelector('a-waves');
+      if (waves) {
+        // Trigger intersection
+        waves.dispatchEvent(new CustomEvent('intersect', { 
+          detail: { isIntersecting: true } 
+        }));
+        
+        // Make it interactive (respond to mouse)
+        setTimeout(() => {
+          waves.dispatchEvent(new CustomEvent('introend'));
+        }, 1000);
+      }
+    });
   </script>
 </body>
 </html>
