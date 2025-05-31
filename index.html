@@ -91,6 +91,7 @@
   <script type="module">
     import Emitter from './Emitter.js';
     import ColorMorph from './ColorMorph.js';
+    import Ticker from './Ticker.js';
     
     // Initialize Lenis for smooth scrolling
     let lenis;
@@ -122,6 +123,9 @@
     
     // Wait for all resources to load before initializing
     window.addEventListener('load', () => {
+      // Initialize Ticker
+      Ticker.init();
+      
       // Initialize smooth scrolling
       initLenis();
       
@@ -145,7 +149,17 @@
       // Track window resize
       window.addEventListener('resize', () => {
         Emitter.emit('resize');
+        Ticker.nextTick(() => {
+          Emitter.emit('updateViewport');
+        });
       });
+      
+      // Track scroll events
+      window.addEventListener('scroll', () => {
+        Ticker.nextTick(() => {
+          Emitter.emit('scroll', window.scrollY);
+        });
+      }, { passive: true });
       
       // Make waves interactive
       const waves = document.querySelector('a-waves');
