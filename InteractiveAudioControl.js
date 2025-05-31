@@ -13,22 +13,22 @@ export class InteractiveAudioControl {
   /**
    * Create a new interactive audio controller
    * @param {HTMLElement} gridElement The wireframe grid element (AWaves)
-   * @param {HTMLAudioElement} audioElement The audio element to control
-   * @param {AudioContext} audioContext Optional audio context
+   * @param {AudioContext} audioContext The audio context for Web Audio API
+   * @param {AudioNode} sourceNode Optional source node to apply effects to
    */
-  constructor(gridElement, audioElement, audioContext) {
+  constructor(gridElement, audioContext, sourceNode = null) {
     // Elements
     this.gridElement = gridElement;
-    this.audioElement = audioElement;
     
     // Audio nodes
-    this.context = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-    this.sourceNode = null;
+    this.context = audioContext;
+    this.sourceNode = sourceNode; // Will be set or connected later if not provided
     this.analyserNode = null;
     this.pitchNode = null; // Will be created when needed
     this.filterNode = null; // Will be created when needed
     this.delayNode = null; // Will be created when needed
     this.gainNode = null; // Will be created when needed
+    this.pannerNode = null; // Will be created for panning effect
     
     // Pizzicato.js integration
     this.pizzicatoSound = null;
@@ -39,6 +39,9 @@ export class InteractiveAudioControl {
       reverb: null,
       tremolo: null
     };
+    
+    // Fallback audio element if needed
+    this.audioElement = null;
     
     // xa-effects.js (LibrosaEffects) integration for audio processing
     this.librosaEffects = null;
@@ -59,11 +62,19 @@ export class InteractiveAudioControl {
     this.originalPlaybackRate = 1.0;
     this.originalVolume = 1.0;
     
+    // Audio frequency data for dynamic effects
+    this.audioData = {
+      energy: 0,
+      bass: 0,
+      mid: 0,
+      high: 0
+    };
+    
     // Effect parameters
-    this.pitchRange = 0.5; // +/- 50% pitch shift
-    this.filterRange = 10000; // Hz
-    this.delayRange = 0.5; // seconds
-    this.volumeRange = 0.5; // +/- 50% volume change
+    this.pitchRange = 0.8; // +/- 80% pitch shift for more noticeable effect
+    this.filterRange = 12000; // Hz, extended for broader frequency manipulation
+    this.delayRange = 0.7; // seconds, increased for more pronounced delay
+    this.volumeRange = 0.7; // +/- 70% volume change for greater dynamic range
     
     // Zones: divide grid into regions with different effects, expanded for Pizzicato effects
     this.zones = [
@@ -91,10 +102,10 @@ export class InteractiveAudioControl {
     // Create audio processing chain
     this.setupAudioNodes();
     
-    // Initialize Pizzicato.js sound and effects
+    // Initialize Pizzicato.js sound and effects if applicable
     this.setupPizzicato();
     
-    // Initialize LibrosaEffects for audio processing
+    // Initialize LibrosaEffects for audio processing if applicable
     this.setupLibrosaEffects();
     
     // Create overlay for visualizing zones
@@ -115,10 +126,12 @@ export class InteractiveAudioControl {
    */
   setupAudioNodes() {
     try {
-      // Create source node from audio element
-      this.sourceNode = this.context.createMediaElementSource(this.audioElement);
+      // If sourceNode is not provided, we'll create a placeholder or wait for connection
+      if (!this.sourceNode) {
+        console.log("No source node provided, effects will be applied when connected.");
+      }
       
-      // Create analyser for visualization
+      // Create analyser for visualization if needed
       this.analyserNode = this.context.createAnalyser();
       this.analyserNode.fftSize = 2048;
       
@@ -126,16 +139,46 @@ export class InteractiveAudioControl {
       this.gainNode = this.context.createGain();
       this.gainNode.gain.value = 1.0;
       
-      // Connect basic chain
-      this.sourceNode.connect(this.analyserNode);
-      this.analyserNode.connect(this.gainNode);
-      this.gainNode.connect(this.context.destination);
+      // Create panner node for stereo panning
+      this.pannerNode = this.context.createStereoPanner();
+      this.pannerNode.pan.value = 0; // Start at center
       
-      // Store original settings
-      this.originalPlaybackRate = this.audioElement.playbackRate;
-      this.originalVolume = this.audioElement.volume;
+      // Connect basic chain if sourceNode exists
+      if (this.sourceNode) {
+        this.sourceNode.connect(this.analyserNode);
+        this.analyserNode.connect(this.pannerNode);
+        this.pannerNode.connect(this.gainNode);
+        this.gainNode.connect(this.context.destination);
+        console.log("Audio nodes connected with provided source, including panner.");
+      } else {
+        // Placeholder for later connection
+        console.log("Audio nodes initialized, awaiting source connection.");
+      }
+      
+      // Store original settings if audioElement exists for fallback
+      if (this.audioElement) {
+        this.originalPlaybackRate = this.audioElement.playbackRate;
+        this.originalVolume = this.audioElement.volume;
+      } else {
+        this.originalPlaybackRate = 1.0;
+        this.originalVolume = 1.0;
+      }
     } catch (error) {
       console.error("Error setting up audio nodes:", error);
+    }
+  }
+  
+  /**
+   * Connect a source node to the effects chain after initialization
+   * @param {AudioNode} sourceNode The source node to connect
+   */
+  connectSource(sourceNode) {
+    try {
+      this.sourceNode = sourceNode;
+      this.sourceNode.connect(this.analyserNode);
+      console.log("Source node connected to effects chain.", sourceNode);
+    } catch (error) {
+      console.error("Error connecting source node:", error);
     }
   }
   
@@ -150,15 +193,27 @@ export class InteractiveAudioControl {
         return;
       }
       
-      // Create a Pizzicato sound from the audio element
-      this.pizzicatoSound = new Pizzicato.Sound({
-        source: 'file',
-        options: {
-          path: this.audioElement.src,
-          loop: this.audioElement.loop,
-          volume: this.audioElement.volume
-        }
-      });
+      // Create a Pizzicato sound, using audio element if available, otherwise placeholder
+      if (this.audioElement && this.audioElement.src) {
+        this.pizzicatoSound = new Pizzicato.Sound({
+          source: 'file',
+          options: {
+            path: this.audioElement.src,
+            loop: this.audioElement.loop || false,
+            volume: this.audioElement.volume || 1.0
+          }
+        });
+      } else {
+        // Placeholder sound, will be updated when source is available
+        this.pizzicatoSound = new Pizzicato.Sound({
+          source: 'wave',
+          options: {
+            frequency: 440, // Placeholder tone
+            volume: 0 // Silent until connected
+          }
+        });
+        console.log("Pizzicato initialized with placeholder, awaiting audio source.");
+      }
       
       // Initialize Pizzicato effects
       this.pizzicatoEffects.delay = new Pizzicato.Effects.Delay({
@@ -278,21 +333,32 @@ export class InteractiveAudioControl {
    * Bind event listeners to grid and audio element
    */
   bindEvents() {
-    // Mouse events
+    // Mouse events for grid interaction
     this.gridElement.addEventListener('mousedown', this.onInteractionStart.bind(this));
     window.addEventListener('mousemove', this.onInteractionMove.bind(this));
     window.addEventListener('mouseup', this.onInteractionEnd.bind(this));
     
-    // Touch events
+    // Mouse events for panning across the entire page
+    window.addEventListener('mousemove', this.onPageMouseMove.bind(this));
+    window.addEventListener('mouseleave', this.onPageMouseLeave.bind(this));
+    
+    // Touch events for grid interaction
     this.gridElement.addEventListener('touchstart', this.onInteractionStart.bind(this));
     window.addEventListener('touchmove', this.onInteractionMove.bind(this));
     window.addEventListener('touchend', this.onInteractionEnd.bind(this));
     window.addEventListener('touchcancel', this.onInteractionEnd.bind(this));
     
-    // Audio events
-    this.audioElement.addEventListener('play', this.onAudioPlay.bind(this));
-    this.audioElement.addEventListener('pause', this.onAudioPause.bind(this));
-    this.audioElement.addEventListener('ended', this.onAudioEnded.bind(this));
+    // Audio events if using audio element
+    if (this.audioElement) {
+      this.audioElement.addEventListener('play', this.onAudioPlay.bind(this));
+      this.audioElement.addEventListener('pause', this.onAudioPause.bind(this));
+      this.audioElement.addEventListener('ended', this.onAudioEnded.bind(this));
+    }
+    
+    // Listen for audio data events from visualization system
+    if (window.Emitter) {
+      window.Emitter.on('audioData', this.onAudioData.bind(this));
+    }
     
     // Info toggle - show/hide overlay on double-click
     this.gridElement.addEventListener('dblclick', this.toggleOverlay.bind(this));
@@ -307,15 +373,61 @@ export class InteractiveAudioControl {
   }
   
   /**
+   * Handle mouse movement across the entire page for panning
+   * @param {Event} e Mouse event
+   */
+  onPageMouseMove(e) {
+    // Calculate normalized X position across the entire page (0 to 1)
+    const pageWidth = window.innerWidth;
+    const normalizedX = e.clientX / pageWidth;
+    
+    // Convert to panning value (-1 for left, 1 for right)
+    const panValue = (normalizedX * 2) - 1;
+    
+    // Apply panning if pannerNode exists
+    if (this.pannerNode) {
+      this.pannerNode.pan.setValueAtTime(panValue, this.context.currentTime);
+      console.log("Panning applied:", panValue);
+    }
+  }
+  
+  /**
+   * Handle mouse leaving the page, reset panning to center
+   */
+  onPageMouseLeave() {
+    // Reset panning to center when mouse leaves the page
+    if (this.pannerNode) {
+      this.pannerNode.pan.setValueAtTime(0, this.context.currentTime);
+      console.log("Mouse left page, panning reset to center.");
+    }
+  }
+  
+  /**
    * Handle start of interaction (mouse down or touch start)
    * @param {Event} e Mouse or touch event
    */
   onInteractionStart(e) {
     e.preventDefault();
     
-    // Auto-play audio if not playing
-    if (this.audioElement.paused) {
-      this.audioElement.play().catch(err => console.error("Failed to play audio:", err));
+    // Log current audio state for debugging
+    console.log("Interaction started. Attempting to ensure audio playback.");
+    
+    // If using audio element as fallback, attempt playback
+    if (this.audioElement && this.audioElement.paused) {
+      this.audioElement.play().catch(err => {
+        console.error("Failed to play audio on interaction start:", err);
+        // Retry playback after a short delay if initial attempt fails
+        setTimeout(() => {
+          if (this.audioElement.paused && this.isInteracting) {
+            console.log("Retrying audio playback...");
+            this.audioElement.play().catch(retryErr => console.error("Retry failed to play audio:", retryErr));
+          }
+        }, 100);
+      });
+    } else if (this.audioElement) {
+      console.log("Audio is already playing via element.");
+    } else {
+      console.log("No audio element in use, relying on Web Audio API source.");
     }
     
     this.isInteracting = true;
@@ -477,6 +589,8 @@ export class InteractiveAudioControl {
     const activeZone = this.getActiveZone(normalizedX, normalizedY);
     if (!activeZone) return;
     
+    console.log("Applying effect for zone:", activeZone.name);
+    
     // Calculate intensity based on distance from center of zone
     const zoneWidth = activeZone.x[1] - activeZone.x[0];
     const zoneHeight = activeZone.y[1] - activeZone.y[0];
@@ -517,18 +631,36 @@ export class InteractiveAudioControl {
   }
   
   /**
+   * Handle audio data event from visualization system
+   * @param {Object} data Audio frequency data
+   */
+  onAudioData(data) {
+    this.audioData.energy = data.energy || 0;
+    this.audioData.bass = data.bass || 0;
+    this.audioData.mid = data.mid || 0;
+    this.audioData.high = data.high || 0;
+  }
+  
+  /**
    * Apply pitch shift effect
    * @param {number} x Normalized X position in zone (-1 to 1)
    * @param {number} y Normalized Y position in zone (-1 to 1)
    */
   applyPitchEffect(x, y) {
     // Use Y position for pitch control (higher = higher pitch)
-    const pitchShift = -y * this.pitchRange;
+    let pitchShift = -y * this.pitchRange;
     
-    // Apply pitch shift using playbackRate
-    // This is a simple approach that changes both pitch and speed
+    // Enhance pitch shift based on audio energy (more energy = more extreme pitch)
+    pitchShift *= (1 + this.audioData.energy * 0.5);
+    
+    // Apply pitch shift using playbackRate if using audio element
     const newRate = this.originalPlaybackRate * (1 + pitchShift);
-    this.audioElement.playbackRate = Math.max(0.25, Math.min(2.0, newRate));
+    if (this.audioElement) {
+      this.audioElement.playbackRate = Math.max(0.25, Math.min(2.0, newRate));
+      console.log("Applied pitch effect to audio element:", newRate);
+    } else {
+      console.log("Pitch effect not applied: no audio element in use.");
+    }
     
     // Update visualization
     this.cursor.textContent = `${(pitchShift * 100).toFixed(0)}%`;
@@ -546,10 +678,15 @@ export class InteractiveAudioControl {
       this.filterNode.type = 'lowpass';
       this.filterNode.Q.value = 1;
       
-      // Disconnect and reconnect nodes to add filter
-      this.analyserNode.disconnect();
-      this.analyserNode.connect(this.filterNode);
-      this.filterNode.connect(this.gainNode);
+      // Disconnect and reconnect nodes to add filter if source exists
+      if (this.sourceNode) {
+        this.analyserNode.disconnect();
+        this.analyserNode.connect(this.filterNode);
+        this.filterNode.connect(this.gainNode);
+        console.log("Filter node created and connected.");
+      } else {
+        console.log("Filter node created but not connected: no source node.");
+      }
     }
     
     // Use X position for filter type (left = lowpass, right = highpass)
@@ -566,10 +703,15 @@ export class InteractiveAudioControl {
     const minFreq = 100;
     const maxFreq = 20000;
     const normalizedY = (1 - (-y + 1) / 2); // Convert from -1,1 to 0,1 and invert
-    const frequency = minFreq * Math.pow(maxFreq / minFreq, normalizedY);
+    let frequency = minFreq * Math.pow(maxFreq / minFreq, normalizedY);
+    
+    // Adjust frequency range based on high frequency content (more highs = wider range)
+    frequency *= (1 + this.audioData.high * 0.3);
+    frequency = Math.min(maxFreq, frequency);
     
     // Apply filter
     this.filterNode.frequency.setValueAtTime(frequency, this.context.currentTime);
+    console.log("Applied filter effect:", this.filterNode.type, "Frequency:", frequency);
     
     // Update visualization
     this.cursor.textContent = `${Math.round(frequency)}Hz`;
@@ -609,7 +751,10 @@ export class InteractiveAudioControl {
    */
   applyVolumeEffect(x, y) {
     // Use Y position for volume control (higher = louder)
-    const volumeShift = -y * this.volumeRange;
+    let volumeShift = -y * this.volumeRange;
+    
+    // Enhance volume shift based on bass energy (more bass = louder potential)
+    volumeShift *= (1 + this.audioData.bass * 0.4);
     
     // Apply volume change
     const newVolume = this.originalVolume * (1 + volumeShift);
