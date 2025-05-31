@@ -1,0 +1,3 @@
+# Ignore Astro source folders
+pages/
+components/
