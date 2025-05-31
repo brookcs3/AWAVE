@@ -23,6 +23,7 @@ class AWaves extends HTMLElement {
   bindEvents() {
     Emitter.on('mousemove', this.onMouseMove, this);
     Emitter.on('resize', this.onResize, this);
+    Emitter.on('audioData', this.onAudioData, this);
 
     this.addEventListener('touchmove', this.onTouchMove.bind(this));
     this.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -30,6 +31,13 @@ class AWaves extends HTMLElement {
     this.addEventListener('mouseup', this.onMouseUp.bind(this));
     this.addEventListener('intersect', this.onIntersect.bind(this), { passive: true });
     this.addEventListener('introend', this.onIntroEnd.bind(this));
+  }
+
+  onAudioData(data) {
+    this.audioData.energy = data.energy || 0;
+    this.audioData.bass = data.bass || 0;
+    this.audioData.mid = data.mid || 0;
+    this.audioData.high = data.high || 0;
   }
 
   onMouseDown(e) {
@@ -105,6 +113,12 @@ class AWaves extends HTMLElement {
     this.lines = [];
     this.paths = [];
     this.noise = new Noise(Math.random());
+    this.audioData = {
+      energy: 0,
+      bass: 0,
+      mid: 0,
+      high: 0
+    };
 
     this.isInteractive = false;
     this.isPaused = false; // Start with animation running
@@ -192,15 +206,27 @@ class AWaves extends HTMLElement {
   }
 
   movePoints(time) {
-    const { lines, mouse, noise } = this;
+    const { lines, mouse, noise, audioData } = this;
     lines.forEach((points) => {
       points.forEach((p) => {
         const move = noise.perlin2(
           (p.x + time * 0.0125) * 0.002,
           (p.y + time * 0.005) * 0.0015
         ) * 12;
-        p.wave.x = Math.cos(move) * 32;
-        p.wave.y = Math.sin(move) * 16;
+        // Base wave movement influenced by noise
+        let waveX = Math.cos(move) * 32;
+        let waveY = Math.sin(move) * 16;
+        
+        // Modify wave movement based on audio data
+        if (audioData.energy > 0) {
+          const audioInfluence = audioData.energy * 50; // Scale energy for noticeable effect
+          waveX += Math.cos(move + audioData.bass * 2) * audioInfluence;
+          waveY += Math.sin(move + audioData.mid * 2) * audioInfluence;
+        }
+        
+        p.wave.x = waveX;
+        p.wave.y = waveY;
+        
         if (this.isInteractive) {
           const dx = p.x - mouse.sx;
           const dy = p.y - mouse.sy;
