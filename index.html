@@ -83,6 +83,7 @@
   <script type="module" src="ColorMorph.js"></script>
   <script type="module" src="AWaves.js"></script>
   <script type="module" src="AWavesVariant2.js"></script>
+  <script type="module" src="LiquidMetalEffect.js"></script>
   
   <!-- Add mouse tracking script -->
   <script type="module">
@@ -274,6 +275,16 @@
           e.preventDefault();
           switchVisualizer('variant2');
           console.log('Switched to Variant 2 Visualizer');
+        } else if (e.key === '3') {
+          e.preventDefault();
+          // Toggle liquid metal effect for the current visualizer if it supports it
+          if (currentVisualizer && currentVisualizer.liquidMetalEffect) {
+            const isActive = currentVisualizer.liquidMetalEffect.isActive;
+            currentVisualizer.liquidMetalEffect.setActive(!isActive);
+            console.log(`Liquid Metal Effect ${isActive ? 'Disabled' : 'Enabled'}`);
+          } else {
+            console.log('Liquid Metal Effect not available for this visualizer');
+          }
         }
       });
       
