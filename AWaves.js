@@ -234,7 +234,7 @@ class AWaves extends HTMLElement {
     const dy = mouse.y - mouse.ly;
     const d = Math.hypot(dx, dy);
     mouse.v = d;
-    mouse.vs += (d - mouse.vs) * 0.4; // Increased from 0.1 for faster velocity tracking
+    mouse.vs += (d - mouse.vs) * 0.2; // Increased from 0.1 for faster velocity tracking
     mouse.vs = Math.min(100, mouse.vs);
     mouse.lx = mouse.x;
     mouse.ly = mouse.y;
