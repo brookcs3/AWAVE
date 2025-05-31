@@ -1,3 +1,4 @@
 # Ignore Astro source folders
 pages/
 components/
+.DS_Store
