@@ -2,6 +2,11 @@ import Emitter from './Emitter.js';
 import Noise from './Noise.js';
 // GSAP is loaded globally from CDN
 
+// Check for browser support of required features
+const supportsCustomElements = 'customElements' in window;
+const supportsSVG = !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+const supportsWebAnimations = 'animate' in Element.prototype;
+
 class AWaves extends HTMLElement {
   svg;
   bounding;
@@ -11,6 +16,7 @@ class AWaves extends HTMLElement {
   noise;
   isInteractive;
   isPaused;
+  isDragging;
 
 
 
@@ -19,8 +25,26 @@ class AWaves extends HTMLElement {
     Emitter.on('resize', this.onResize, this);
 
     this.addEventListener('touchmove', this.onTouchMove.bind(this));
+    this.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.addEventListener('mousemove', this.onElementMouseMove.bind(this));
+    this.addEventListener('mouseup', this.onMouseUp.bind(this));
     this.addEventListener('intersect', this.onIntersect.bind(this), { passive: true });
     this.addEventListener('introend', this.onIntroEnd.bind(this));
+  }
+
+  onMouseDown(e) {
+    this.isDragging = true;
+    this.updateMousePosition(e.clientX, e.clientY);
+  }
+
+  onElementMouseMove(e) {
+    if (this.isDragging) {
+      this.updateMousePosition(e.clientX, e.clientY);
+    }
+  }
+
+  onMouseUp() {
+    this.isDragging = false;
   }
 
   onResize() {
@@ -84,6 +108,7 @@ class AWaves extends HTMLElement {
 
     this.isInteractive = false;
     this.isPaused = false; // Start with animation running
+    this.isDragging = false;
 
     // Remove theme-contrasted class
     document.documentElement.classList.remove('theme-contrasted');
