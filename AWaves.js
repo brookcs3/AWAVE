@@ -280,7 +280,7 @@ class AWaves extends HTMLElement {
     const { mouse } = this;
     // Increase mouse tracking responsiveness by adjusting the easing factor
     mouse.sx += (mouse.x - mouse.sx) * 0.1; // Increased from 0.1 for faster response
-    mouse.sy += (mouse.y - mouse.sy) * 0.4; // Increased from 0.1 for faster response
+    mouse.sy += (mouse.y - mouse.sy) * 0.1; // Increased from 0.1 for faster response
     const dx = mouse.x - mouse.lx;
     const dy = mouse.y - mouse.ly;
     const d = Math.hypot(dx, dy);

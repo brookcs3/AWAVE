@@ -84,6 +84,10 @@
   <script type="module" src="AWaves.js"></script>
   <script type="module" src="AWavesVariant2.js"></script>
   <script type="module" src="LiquidMetalEffect.js"></script>
+  <script type="module" src="Pizzicato.js"></script>
+  <script type="module" src="xa-effects.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.7.77/dist/tone.js"></script>
+  <script type="module" src="InteractiveAudioControl.js"></script>
   
   <!-- Add mouse tracking script -->
   <script type="module">
@@ -153,6 +157,16 @@
       // Set loaded class
       document.documentElement.classList.add('is-loaded');
       
+      // Ensure initial visualizer interactivity is triggered
+      setTimeout(() => {
+        currentVisualizer.dispatchEvent(new CustomEvent('intersect', { 
+          detail: { isIntersecting: true } 
+        }));
+        setTimeout(() => {
+          currentVisualizer.dispatchEvent(new CustomEvent('introend'));
+        }, 1000);
+      }, 100);
+      
       // Audio playback and visualizer integration using Web Audio API
       const wavesElement = document.querySelector('a-waves');
       let audioContext = null;
@@ -164,6 +178,9 @@
       let currentTrackIndex = 0;
       const tracks = ['ui.m4a', 'RadioBabylon.m4a'];
       let frequencyData = new Uint8Array(128);
+      // Interactive audio control for both Viz 1 and Viz 2
+      let interactiveAudioControl = null;
+      let audioElement = null; // Will be created for interactive control
       
       // Function to initialize Web Audio API
       function initAudio() {
@@ -172,6 +189,13 @@
           analyser = audioContext.createAnalyser();
           analyser.fftSize = 256;
           analyser.connect(audioContext.destination);
+        }
+        // Initialize audio element for interactive control if not already done
+        if (!audioElement) {
+          audioElement = document.createElement('audio');
+          audioElement.src = tracks[currentTrackIndex];
+          audioElement.preload = 'auto';
+          document.body.appendChild(audioElement); // Append to body for Web Audio API to work
         }
       }
       
@@ -259,7 +283,7 @@
         }
       }
       
-      // Desktop keyboard controls (p for Audio 2, l for Audio 1, 1 for first viz, 2 for second viz)
+      // Desktop keyboard controls (p for Audio 2, l for Audio 1, 1 for first viz, 2 for second viz, 3 for effects)
       document.addEventListener('keydown', (e) => {
         if (e.key === 'l') {
           e.preventDefault();
@@ -275,6 +299,10 @@
           e.preventDefault();
           switchVisualizer('variant2');
           console.log('Switched to Variant 2 Visualizer');
+          // Ensure interactive audio control is initialized or updated for the current visualizer
+          if (!interactiveAudioControl || interactiveAudioControl.gridElement !== currentVisualizer) {
+            initInteractiveAudioControl();
+          }
         } else if (e.key === '3') {
           e.preventDefault();
           // Toggle liquid metal effect for the current visualizer if it supports it
@@ -287,6 +315,16 @@
           }
         }
       });
+      
+      // Function to initialize interactive audio control for the current visualizer
+      function initInteractiveAudioControl() {
+        if (!audioElement) {
+          initAudio(); // Ensure audio element is created
+        }
+        // Initialize or reinitialize for the current visualizer
+        interactiveAudioControl = new InteractiveAudioControl(currentVisualizer, audioElement, audioContext);
+        console.log('Interactive Audio Control initialized for current visualizer');
+      }
       
       // Mobile long press controls (3-second press to toggle play/stop and cycle tracks)
       function handleLongPressStart() {
