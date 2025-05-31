@@ -18,12 +18,11 @@ class AWaves extends HTMLElement {
   isPaused;
   isDragging;
 
-
-
   bindEvents() {
     Emitter.on('mousemove', this.onMouseMove, this);
     Emitter.on('resize', this.onResize, this);
     Emitter.on('audioData', this.onAudioData, this);
+    Emitter.on('animationState', this.onAnimationState, this);
 
     this.addEventListener('touchmove', this.onTouchMove.bind(this));
     this.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -34,10 +33,29 @@ class AWaves extends HTMLElement {
   }
 
   onAudioData(data) {
+    // Track previous energy for peak detection
+    this.prevEnergy = this.audioData.energy || 0;
     this.audioData.energy = data.energy || 0;
     this.audioData.bass = data.bass || 0;
     this.audioData.mid = data.mid || 0;
     this.audioData.high = data.high || 0;
+    
+    // Detect peak for sunspot effect (significant sudden increase in energy)
+    const energyDiff = this.audioData.energy - this.prevEnergy;
+    if (energyDiff > 0.2 && this.audioData.energy > 0.3) {
+      this.sunspotTrigger = true;
+      this.sunspotIntensity = this.audioData.energy;
+      this.sunspotTime = Date.now();
+    } else if (this.sunspotTrigger && Date.now() - this.sunspotTime > 200) {
+      // Fade out after 200ms
+      this.sunspotTrigger = false;
+      this.sunspotIntensity = 0;
+    }
+  }
+
+  onAnimationState(state) {
+    this.animationState = state || 1;
+    console.log('Animation state changed to:', this.animationState);
   }
 
   onMouseDown(e) {
@@ -119,6 +137,11 @@ class AWaves extends HTMLElement {
       mid: 0,
       high: 0
     };
+    this.animationState = 1; // Default animation state (1 to 4)
+    this.prevEnergy = 0;
+    this.sunspotTrigger = false;
+    this.sunspotIntensity = 0;
+    this.sunspotTime = 0;
 
     this.isInteractive = false;
     this.isPaused = false; // Start with animation running
@@ -206,7 +229,7 @@ class AWaves extends HTMLElement {
   }
 
   movePoints(time) {
-    const { lines, mouse, noise, audioData } = this;
+    const { lines, mouse, noise, audioData, animationState, sunspotTrigger, sunspotIntensity } = this;
     lines.forEach((points) => {
       points.forEach((p) => {
         const move = noise.perlin2(
@@ -217,11 +240,51 @@ class AWaves extends HTMLElement {
         let waveX = Math.cos(move) * 32;
         let waveY = Math.sin(move) * 16;
         
-        // Modify wave movement based on audio data
+        // Modify wave movement based on audio data with different animation states
         if (audioData.energy > 0) {
           const audioInfluence = audioData.energy * 50; // Scale energy for noticeable effect
-          waveX += Math.cos(move + audioData.bass * 2) * audioInfluence;
-          waveY += Math.sin(move + audioData.mid * 2) * audioInfluence;
+          if (animationState === 1) {
+            // State 1: Corner stretch with central twist (right then left) and vibrations
+            const centerX = this.bounding.width / 2;
+            const centerY = this.bounding.height / 2;
+            const distFromCenter = Math.hypot(p.x - centerX, p.y - centerY);
+            const maxDist = Math.hypot(centerX, centerY);
+            const stretchFactor = distFromCenter / maxDist; // Stretch more at edges
+            const twistAngle = (time * 0.01 + audioData.bass * 2) * (p.x > centerX ? 1 : -1);
+            waveX += Math.cos(twistAngle) * audioInfluence * stretchFactor * 1.5;
+            waveY += Math.sin(twistAngle) * audioInfluence * stretchFactor * 1.5;
+            // Add vibration effect with high frequencies
+            waveX += Math.sin(time * 0.05 + audioData.high * 3) * audioInfluence * 0.2;
+            waveY += Math.cos(time * 0.05 + audioData.high * 3) * audioInfluence * 0.2;
+          } else if (animationState === 2) {
+            // State 2: Horizontal waves driven by bass - wide sweeping motion
+            waveX += Math.cos(move + audioData.bass * 3 + p.y * 0.002) * audioInfluence * 1.5;
+            waveY += Math.sin(move + audioData.mid * 0.5) * audioInfluence * 0.3;
+          } else if (animationState === 3) {
+            // State 3: Wide rolling waves top to bottom with varying sizes
+            const verticalPos = p.y / this.bounding.height; // Position factor from top to bottom
+            const waveSize = Math.sin(verticalPos * Math.PI + time * 0.01) * 0.5 + 0.5; // Varying wave size
+            waveX += Math.cos(move + audioData.mid * 2 + verticalPos * 2) * audioInfluence * 0.5 * waveSize;
+            waveY += Math.sin(move + audioData.bass * 1.5 + time * 0.02) * audioInfluence * 1.2 * (1 + waveSize * 0.5);
+          } else if (animationState === 4) {
+            // State 4: Balanced wave pattern - less chaotic, more rhythmic
+            const rhythmMove = move + audioData.bass * 1.5 + audioData.mid * 0.8;
+            waveX += Math.sin(rhythmMove) * audioInfluence * 0.6;
+            waveY += Math.cos(rhythmMove + audioData.high * 0.5) * audioInfluence * 0.6;
+          }
+        }
+        
+        // Add sunspot-like variations triggered by frequency peaks
+        if (sunspotTrigger) {
+          const centerX = this.bounding.width / 2;
+          const centerY = this.bounding.height / 2;
+          const distFromCenter = Math.hypot(p.x - centerX, p.y - centerY);
+          const maxDist = Math.hypot(centerX, centerY);
+          if (distFromCenter < maxDist * 0.3) { // Small burst near center
+            const burstFactor = (1 - distFromCenter / (maxDist * 0.3)) * sunspotIntensity * 20;
+            waveX += Math.cos(time * 0.1 + p.x * 0.01) * burstFactor;
+            waveY += Math.sin(time * 0.1 + p.y * 0.01) * burstFactor;
+          }
         }
         
         p.wave.x = waveX;

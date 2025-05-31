@@ -237,6 +237,12 @@
         if (e.key === 'p' || e.key === 'l') {
           e.preventDefault();
           togglePlayback();
+        } else if (e.key >= '1' && e.key <= '4') {
+          // Keys 1-4 to switch animation states
+          e.preventDefault();
+          const state = parseInt(e.key);
+          Emitter.emit('animationState', state);
+          console.log('Switching to animation state:', state);
         }
       });
       
