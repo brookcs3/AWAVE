@@ -23,7 +23,7 @@
       color: var(--color-secondary);
     }
     
-    a-waves {
+    a-waves, a-waves-variant2 {
       display: block;
       width: 100%;
       height: 100vh;
@@ -33,7 +33,7 @@
     }
     
   /* Theme from original site */
-  a-waves {
+  a-waves, a-waves-variant2 {
     --x: -0.5rem;
     --y: 50%;
 
@@ -43,7 +43,7 @@
     overflow: hidden;
   }
 
-  a-waves::before {
+  a-waves::before, a-waves-variant2::before {
     position: absolute;
     top: 0;
     left: 0;
@@ -56,13 +56,13 @@
     content: '';
   }
 
-  a-waves svg {
+  a-waves svg, a-waves-variant2 svg {
     display: block;
     width: 100%;
     height: 100%;
   }
 
-  a-waves svg .a__line {
+  a-waves svg .a__line, a-waves-variant2 svg .a__line {
     fill: none;
     stroke: var(--color-secondary);
     stroke-width: 1px;
@@ -82,6 +82,7 @@
   <script type="module" src="Noise.js"></script>
   <script type="module" src="ColorMorph.js"></script>
   <script type="module" src="AWaves.js"></script>
+  <script type="module" src="AWavesVariant2.js"></script>
   
   <!-- Add mouse tracking script -->
   <script type="module">
@@ -113,18 +114,40 @@
       });
       
       // Make waves interactive
-      const waves = document.querySelector('a-waves');
-      if (waves) {
-        // Trigger intersection
-        waves.dispatchEvent(new CustomEvent('intersect', { 
-          detail: { isIntersecting: true } 
-        }));
+      let currentVisualizer = document.querySelector('a-waves');
+      let currentVersion = 'original'; // Track which version is active
+      
+      function switchVisualizer(version) {
+        if (currentVersion === version) return;
         
-        // Make it interactive (respond to mouse)
+        // Remove the current visualizer element
+        if (currentVisualizer) {
+          currentVisualizer.remove();
+        }
+        
+        // Create new visualizer element based on version
+        const newVisualizer = document.createElement(version === 'original' ? 'a-waves' : 'a-waves-variant2');
+        newVisualizer.setAttribute('data-intersect', '');
+        newVisualizer.innerHTML = '<svg class="js-svg"></svg>';
+        document.body.appendChild(newVisualizer);
+        
+        // Update reference and version
+        currentVisualizer = newVisualizer;
+        currentVersion = version;
+        
+        // Trigger intersection and introend events for the new visualizer
         setTimeout(() => {
-          waves.dispatchEvent(new CustomEvent('introend'));
-        }, 1000);
+          currentVisualizer.dispatchEvent(new CustomEvent('intersect', { 
+            detail: { isIntersecting: true } 
+          }));
+          setTimeout(() => {
+            currentVisualizer.dispatchEvent(new CustomEvent('introend'));
+          }, 1000);
+        }, 100);
       }
+      
+      // Initialize the first visualizer
+      switchVisualizer('original');
       
       // Set loaded class
       document.documentElement.classList.add('is-loaded');
@@ -222,21 +245,35 @@
         requestAnimationFrame(updateVisualization);
       }
       
-      // Function to toggle playback and cycle tracks
-      function togglePlayback() {
-        if (isPlaying) {
+      // Function to toggle playback for a specific track
+      function togglePlayback(trackIndex) {
+        if (isPlaying && currentTrackIndex === trackIndex) {
           stopPlayback();
         } else {
-          currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+          if (isPlaying) {
+            stopPlayback();
+          }
+          currentTrackIndex = trackIndex;
           playTrack(tracks[currentTrackIndex]);
         }
       }
       
-      // Desktop keyboard controls (p or l to toggle play/pause and cycle tracks)
+      // Desktop keyboard controls (p for Audio 2, l for Audio 1, 1 for first viz, 2 for second viz)
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'p' || e.key === 'l') {
+        if (e.key === 'l') {
           e.preventDefault();
-          togglePlayback();
+          togglePlayback(0); // Audio 1
+        } else if (e.key === 'p') {
+          e.preventDefault();
+          togglePlayback(1); // Audio 2
+        } else if (e.key === '1') {
+          e.preventDefault();
+          switchVisualizer('original');
+          console.log('Switched to Original Visualizer');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          switchVisualizer('variant2');
+          console.log('Switched to Variant 2 Visualizer');
         }
       });
       
