@@ -1,4 +1,15 @@
-# Ignore Astro source folders
+# General ignores
+node_modules/
+dist/
+*.log
+*.map
+
+# macOS
+.DS_Store
+
+# Development
+.vscode/
+
+# Astro project sources
 pages/
 components/
-.DS_Store
