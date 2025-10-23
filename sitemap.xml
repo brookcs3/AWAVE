@@ -1,82 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url><loc>https://transcription.1oa.cc/</loc></url>
-  <url><loc>http://transcription.1oa.cc/</loc></url>
-  <url><loc>https://transcription.1oa.cc/about.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/about.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/contact.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/contact.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/privacy.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/privacy.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/reviews.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/reviews.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/comparisons.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/comparisons.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/professional-guides.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/professional-guides.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/privacy-guide.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/privacy-guide.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/best-mac-apps-try-2025.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/best-mac-apps-try-2025.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/best-offline-transcription-mac-2025.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/best-offline-transcription-mac-2025.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/privacy-risks-cloud-transcription.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/privacy-risks-cloud-transcription.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/scriber-pro-review.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/scriber-pro-review.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/otter-ai-review.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/otter-ai-review.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/rev-review.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/rev-review.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/posts/otter-ai-lawsuit.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/posts/otter-ai-lawsuit.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/comparisons/scriber-pro-vs-otter.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/comparisons/scriber-pro-vs-otter.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/comparisons/scriber-pro-vs-rev.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/comparisons/scriber-pro-vs-rev.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/guides/student-lecture-download-guide.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/guides/student-lecture-download-guide.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/guides/why-offline-transcription.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/guides/why-offline-transcription.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/guides/transcription-lawyers-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/guides/transcription-lawyers-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/guides/medical-transcription-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/guides/medical-transcription-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/guides/journalist-transcription-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/guides/journalist-transcription-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/about.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/about.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/contact.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/contact.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/privacy.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/privacy.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/reviews.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/reviews.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/comparisons.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/comparisons.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/professional-guides.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/professional-guides.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/privacy-guide.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/privacy-guide.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/posts/best-mac-apps-try-2025.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/posts/best-mac-apps-try-2025.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/posts/best-offline-transcription-mac-2025.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/posts/best-offline-transcription-mac-2025.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/posts/privacy-risks-cloud-transcription.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/posts/privacy-risks-cloud-transcription.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-otter.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-otter.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-rev.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-rev.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/guides/journalist-transcription-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/guides/journalist-transcription-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/guides/medical-transcription-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/guides/medical-transcription-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/guides/transcription-lawyers-mac.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/guides/transcription-lawyers-mac.html</loc></url>
-  <url><loc>https://transcription.1oa.cc/zh/guides/why-offline-transcription.html</loc></url>
-  <url><loc>http://transcription.1oa.cc/zh/guides/why-offline-transcription.html</loc></url>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://transcription.1oa.cc/</loc>
+    <lastmod>2025-10-23</lastmod>
+  </url>
+  <url>
+    <loc>http://transcription.1oa.cc/</loc>
+    <lastmod>2025-10-23</lastmod>
+  </url>
+
+  <url><loc>https://transcription.1oa.cc/about.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/about.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/contact.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/contact.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/privacy.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/privacy.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/reviews.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/reviews.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/comparisons.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/comparisons.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/professional-guides.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/professional-guides.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/privacy-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/privacy-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/best-mac-apps-try-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/best-mac-apps-try-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/best-offline-transcription-mac-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/best-offline-transcription-mac-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/privacy-risks-cloud-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/privacy-risks-cloud-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/scriber-pro-review.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/scriber-pro-review.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/otter-ai-review.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/otter-ai-review.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/rev-review.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/rev-review.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/posts/otter-ai-lawsuit.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/posts/otter-ai-lawsuit.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/comparisons/scriber-pro-vs-otter.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/comparisons/scriber-pro-vs-otter.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/comparisons/scriber-pro-vs-rev.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/comparisons/scriber-pro-vs-rev.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/guides/student-lecture-download-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/guides/student-lecture-download-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/guides/why-offline-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/guides/why-offline-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/guides/transcription-lawyers-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/guides/transcription-lawyers-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/guides/medical-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/guides/medical-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/guides/journalist-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/guides/journalist-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/about.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/about.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/contact.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/contact.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/privacy.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/privacy.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/reviews.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/reviews.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/comparisons.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/comparisons.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/professional-guides.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/professional-guides.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/privacy-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/privacy-guide.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/posts/best-mac-apps-try-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/posts/best-mac-apps-try-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/posts/best-offline-transcription-mac-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/posts/best-offline-transcription-mac-2025.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/posts/privacy-risks-cloud-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/posts/privacy-risks-cloud-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-otter.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-otter.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-rev.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/comparisons/scriber-pro-vs-rev.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/guides/journalist-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/guides/journalist-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/guides/medical-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/guides/medical-transcription-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/guides/transcription-lawyers-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/guides/transcription-lawyers-mac.html</loc><lastmod>2025-10-23</lastmod></url>
+
+  <url><loc>https://transcription.1oa.cc/zh/guides/why-offline-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+  <url><loc>http://transcription.1oa.cc/zh/guides/why-offline-transcription.html</loc><lastmod>2025-10-23</lastmod></url>
+
 </urlset>
