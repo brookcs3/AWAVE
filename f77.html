@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>f77 Video</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 80vh;
+        }
+        
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .video-wrapper {
+                border-radius: 8px;
+            }
+            
+            video {
+                max-height: 70vh;
+            }
+            
+            .info {
+                font-size: 12px;
+            }
+        }
+        
+        /* Fullscreen button styling */
+        video::-webkit-media-controls-fullscreen-button {
+            display: block;
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-wrapper">
+            <div class="loading" id="loading">Loading video...</div>
+            <video 
+                id="videoPlayer"
+                controls 
+                preload="metadata"
+                playsinline
+                poster=""
+            >
+                <source src="https://github.com/brookcs3/AWAVE/releases/download/v1.0-f77/a537ea696cae45cfa7a378a484af2474.mov" type="video/quicktime">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="info">
+            Tap to play • Use fullscreen for best experience
+        </div>
+    </div>
+    
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const loading = document.getElementById('loading');
+        
+        // Hide loading indicator when video can play
+        video.addEventListener('loadeddata', function() {
+            loading.style.display = 'none';
+        });
+        
+        // Show error message if video fails to load
+        video.addEventListener('error', function() {
+            loading.textContent = 'Error loading video';
+            loading.style.color = '#ff4444';
+        });
+        
+        // Optional: Auto-hide controls on mobile after interaction
+        let controlsTimeout;
+        video.addEventListener('play', function() {
+            if (window.innerWidth <= 768) {
+                controlsTimeout = setTimeout(() => {
+                    video.setAttribute('controls', 'controls');
+                }, 3000);
+            }
+        });
+        
+        video.addEventListener('pause', function() {
+            clearTimeout(controlsTimeout);
+        });
+    </script>
+</body>
+</html>
