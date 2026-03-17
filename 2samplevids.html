@@ -24,19 +24,10 @@
             margin: 0 auto;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 40px;
-            margin-bottom: 40px;
         }
 
         .video-card {
@@ -59,21 +50,9 @@
         }
 
         .video-info {
-            padding: 24px;
-        }
-
-        .video-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #F8F8F8;
-        }
-
-        .video-description {
-            font-size: 0.95rem;
-            color: #b0b0b0;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
         }
 
         .download-link {
@@ -92,36 +71,16 @@
             background-color: #e0e0e0;
         }
 
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid #3a3a3a;
-            color: #808080;
-            font-size: 0.9rem;
-        }
-
         @media (max-width: 768px) {
             .videos-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 30px;
-            }
-
-            .video-info {
-                padding: 16px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Sample Videos</h1>
-
         <div class="videos-grid">
             <!-- Video 1 -->
             <div class="video-card">
@@ -130,11 +89,7 @@
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-info">
-                    <div class="video-title">Stemees Scroll Zoom</div>
-                    <div class="video-description">
-                        Experience smooth scroll and zoom animations with interactive UI elements.
-                    </div>
-                    <a href="stemees_scroll_zoomeC.MP4" download class="download-link">Download Video</a>
+                    <a href="stemees_scroll_zoomeC.MP4" download class="download-link">Download</a>
                 </div>
             </div>
 
@@ -145,18 +100,10 @@
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-info">
-                    <div class="video-title">Apple Devices HD</div>
-                    <div class="video-description">
-                        High-quality presentation showcasing responsive design across Apple devices.
-                    </div>
-                    <a href="UntitledProject51854×1368-AppleDevicesHD(BestQuality)(5).m4v" download class="download-link">Download Video</a>
+                    <a href="UntitledProject51854×1368-AppleDevicesHD(BestQuality)(5).m4v" download class="download-link">Download</a>
                 </div>
             </div>
         </div>
-
-        <footer>
-            <p>&copy; 2026 Sample Videos. All rights reserved.</p>
-        </footer>
     </div>
 </body>
 </html>
